@@ -145,18 +145,6 @@ img {
   }
 }
 
-.fav {
-  @extend .cart;
-  
-  &:has(> .favCounter:empty) {
-    display: none;
-  }
-}
-
-.favCounter {
-  @extend .cartCounter;
-}
-
 .hide {
   display: none !important;
 }

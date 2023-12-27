@@ -39,10 +39,15 @@ class FavService {
 
   private async _updCounters() {
     const products = await this.get();
-    const count = products.length >= 10 ? '9+' : products.length;
+    const isEmpty = !products.length;
 
-    //@ts-ignore
-    document.querySelectorAll('.js__fav-counter').forEach(($el: HTMLElement) => ($el.innerText = String(count || '')));
+    const fav = document.querySelector('.js__fav');
+
+    if (isEmpty) {
+      fav?.classList.add('hide');
+    }else{
+      fav?.classList.remove('hide');
+    }
   }
 }
 
