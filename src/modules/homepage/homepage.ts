@@ -3,7 +3,7 @@ import { Component } from '../component';
 import html from './homepage.tpl.html';
 
 import { ProductList } from '../productList/productList';
-import { userService } from 'src/services/user.service';
+import { userService } from '../../services/user.service';
 
 class Homepage extends Component {
   popularProducts: ProductList;
