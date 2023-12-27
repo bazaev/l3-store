@@ -4,10 +4,11 @@ import { genUUID } from '../utils/helpers';
 const ID_DB = '__wb-userId';
 
 class UserService {
-  async init() {
-    const id = await this.getId();
-    window.userId = id;
-    console.warn('UserID: ', id);
+  #userId: string | undefined;
+
+  async userId() {
+    if (!this.#userId) this.#userId = await this.getId();
+    return this.#userId;
   }
 
   async getId(): Promise<string> {
