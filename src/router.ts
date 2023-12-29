@@ -3,6 +3,7 @@ import { notFoundComp } from './modules/notFound/notFound';
 import { homepageComp } from './modules/homepage/homepage';
 import { productDetailComp } from './modules/productDetail/productDetail';
 import { checkoutComp } from './modules/checkout/checkout';
+import { hintsComp } from './modules/hints/hints';
 
 import { userService } from './services/user.service';
 import EventAnalytics from './eventAnalytics';
@@ -11,7 +12,8 @@ const ROUTES = {
   '/': homepageComp,
   '/catalog': catalogComp,
   '/product': productDetailComp,
-  '/checkout': checkoutComp
+  '/checkout': checkoutComp,
+  '/hints': hintsComp,
 };
 
 export default class Router {
