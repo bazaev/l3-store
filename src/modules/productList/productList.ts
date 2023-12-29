@@ -33,6 +33,6 @@ export class ProductList {
       productComp.attach(this.view.root);
     });
 
-    eventAnalytics.viewCard(this.products, this.view.root);
+    eventAnalytics.viewCard(this.products, this.view.root.children);
   }
 }

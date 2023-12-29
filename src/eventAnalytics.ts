@@ -3,6 +3,16 @@ import { genUUID } from "./utils/helpers";
 
 class EventAnalytics {
 
+	abortController: AbortController;
+
+	constructor() {
+		this.abortController = new AbortController();
+
+		window.addEventListener('beforeunload', () => {
+			this.abortController.abort()
+		});
+	}
+
 	#sendEvent(type:string, payload:Object) {
 		const timestamp = Date.now();
 		const data = JSON.stringify({ type, payload, timestamp });
@@ -30,7 +40,7 @@ class EventAnalytics {
 		this.#sendEvent('addToCard', product);
 	}
 
-	viewCard(products:ProductData[], root:HTMLElement) {
+	viewCard(products:ProductData[], children:HTMLCollection) {
 		const keysCache: { [key: number]: string } = {};
 		
 		const intersectionObserver = new IntersectionObserver((entries) => {
@@ -45,9 +55,12 @@ class EventAnalytics {
 					let secretKey = keysCache[product.id];
 
 					if (!secretKey) {
-						const response = await fetch(`/api/getProductSecretKey?id=${product.id}`);
-						secretKey = await response.json();
-						keysCache[product.id] = secretKey;
+						try {
+							const { signal } = this.abortController;
+							const response = await fetch(`/api/getProductSecretKey?id=${product.id}`, { signal });
+							secretKey = await response.json();
+							keysCache[product.id] = secretKey;
+						}catch(e){}
 					}
 
 					this.#sendEvent(type, { ...product, secretKey });
@@ -55,7 +68,7 @@ class EventAnalytics {
 			})
 		});
 
-		[].forEach.call(root.children, (element:HTMLElement, key) => {
+		[].forEach.call(children, (element:HTMLElement, key) => {
 			// @ts-ignore
 			element._index = key;
 			intersectionObserver.observe(element);
