@@ -1,16 +1,13 @@
 import { ProductData } from "types";
+import { genUUID } from "./utils/helpers";
 
 class EventAnalytics {
 
 	#sendEvent(type:string, payload:Object) {
 		const timestamp = Date.now();
-		fetch('/api/sendEvent', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ type, payload, timestamp })
-		});
+		const data = JSON.stringify({ type, payload, timestamp });
+
+		return navigator.sendBeacon('/api/sendEvent', data);
 	}
 
 	route(url:string) {
@@ -20,7 +17,7 @@ class EventAnalytics {
 	purchase(products:ProductData[]) {
 		const totalPrice = products.reduce((acc, product) => (acc += product.salePriceU), 0);
 		const productIds = products.map(({ id }) => id);
-		const orderId = Math.floor(Math.random() * 1000000);
+		const orderId = genUUID();
 
 		this.#sendEvent('purchase', {
 			orderId,
@@ -34,20 +31,26 @@ class EventAnalytics {
 	}
 
 	viewCard(products:ProductData[], root:HTMLElement) {
+		const keysCache: { [key: number]: string } = {};
+		
 		const intersectionObserver = new IntersectionObserver((entries) => {
-			entries.forEach(entry => {
+			entries.forEach(async entry => {
 				if (entry.isIntersecting) {
 					// @ts-ignore
 					const index = entry.target._index;
 					const product = products[index];
 					const isPromo = Object.keys(product.log).length > 0;
 					const type = isPromo ? 'viewCardPromo' : 'viewCard';
-					
-					fetch(`/api/getProductSecretKey?id=${product.id}`)
-						.then(response => response.json())
-						.then(secretKey => {
-							this.#sendEvent(type, { ...product, secretKey });
-						});
+
+					let secretKey = keysCache[product.id];
+
+					if (!secretKey) {
+						const response = await fetch(`/api/getProductSecretKey?id=${product.id}`);
+						secretKey = await response.json();
+						keysCache[product.id] = secretKey;
+					}
+
+					this.#sendEvent(type, { ...product, secretKey });
 				  }
 			})
 		});
