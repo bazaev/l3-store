@@ -4,6 +4,8 @@ import { homepageComp } from './modules/homepage/homepage';
 import { productDetailComp } from './modules/productDetail/productDetail';
 import { checkoutComp } from './modules/checkout/checkout';
 
+import { userService } from './services/user.service';
+
 const ROUTES = {
   '/': homepageComp,
   '/catalog': catalogComp,
@@ -22,8 +24,10 @@ export default class Router {
     window.addEventListener('hashchange', this.route.bind(this));
   }
 
-  route(e: any) {
+  async route(e: any) {
     e.preventDefault();
+
+    await userService.init();
 
     // @ts-ignore
     const component = ROUTES[window.location.pathname] || notFoundComp;

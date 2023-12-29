@@ -46,7 +46,7 @@ class ProductDetail extends Component {
 
     fetch('/api/getPopularProducts', {
         headers: {
-          'x-userid': await userService.userId()
+          'x-userid': userService.userId
         }
       })
       .then((res) => res.json())
