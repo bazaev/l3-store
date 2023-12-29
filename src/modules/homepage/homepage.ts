@@ -15,7 +15,7 @@ class Homepage extends Component {
     this.popularProducts.attach(this.view.popular);
   }
 
-  render() {console.log(userService.userId);
+  render() {
     fetch('/api/getPopularProducts', {
         headers: {
           'x-userid': userService.userId,
