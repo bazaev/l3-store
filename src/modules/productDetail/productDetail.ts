@@ -5,6 +5,7 @@ import { ProductData } from 'types';
 import html from './productDetail.tpl.html';
 import { cartService } from '../../services/cart.service';
 import { userService } from '../../services/user.service';
+import eventAnalytics from '../../eventAnalytics';
 
 class ProductDetail extends Component {
   more: ProductList;
@@ -57,6 +58,8 @@ class ProductDetail extends Component {
 
   private _addToCart() {
     if (!this.product) return;
+
+    eventAnalytics.addToCart(this.product);
 
     cartService.addProduct(this.product);
     this._setInCart();
