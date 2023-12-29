@@ -3,6 +3,7 @@ import { Component } from '../component';
 import html from './homepage.tpl.html';
 
 import { ProductList } from '../productList/productList';
+import { userService } from '../../services/user.service';
 
 class Homepage extends Component {
   popularProducts: ProductList;
@@ -15,7 +16,11 @@ class Homepage extends Component {
   }
 
   render() {
-    fetch('/api/getPopularProducts')
+    fetch('/api/getPopularProducts', {
+        headers: {
+          'x-userid': userService.userId,
+        }
+    })
       .then((res) => res.json())
       .then((products) => {
         this.popularProducts.update(products);
