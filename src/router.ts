@@ -1,3 +1,4 @@
+import { favoritesComp } from './modules/favorites/favorites';
 import { catalogComp } from './modules/catalog/catalog';
 import { notFoundComp } from './modules/notFound/notFound';
 import { homepageComp } from './modules/homepage/homepage';
@@ -10,6 +11,7 @@ import EventAnalytics from './eventAnalytics';
 
 const ROUTES = {
   '/': homepageComp,
+  '/favorites': favoritesComp,
   '/catalog': catalogComp,
   '/product': productDetailComp,
   '/checkout': checkoutComp,

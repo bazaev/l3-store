@@ -4,6 +4,7 @@ import { formatPrice } from '../../utils/helpers';
 import { ProductData } from 'types';
 import html from './productDetail.tpl.html';
 import { cartService } from '../../services/cart.service';
+import { favService } from '../../services/fav.service';
 import { userService } from '../../services/user.service';
 import eventAnalytics from '../../eventAnalytics';
 
@@ -34,10 +35,14 @@ class ProductDetail extends Component {
     this.view.description.innerText = description;
     this.view.price.innerText = formatPrice(salePriceU);
     this.view.btnBuy.onclick = this._addToCart.bind(this);
+    this.view.btnFav.onclick = this._toggleToFav.bind(this);
 
     const isInCart = await cartService.isInCart(this.product);
 
     if (isInCart) this._setInCart();
+
+    const isInFav = await favService.isInFav(this.product);
+    this._setInFav(isInFav);
 
     fetch(`/api/getProductSecretKey?id=${id}`)
       .then((res) => res.json())
@@ -65,9 +70,26 @@ class ProductDetail extends Component {
     this._setInCart();
   }
 
+  private async _toggleToFav() {
+    if (!this.product) return;
+
+    const isInFav = await favService.isInFav(this.product);
+    if (isInFav) {
+      favService.removeProduct(this.product);
+    }else{
+      favService.addProduct(this.product);
+    }
+
+    this._setInFav(!isInFav);
+  }
+
   private _setInCart() {
     this.view.btnBuy.innerText = '✓ В корзине';
     this.view.btnBuy.disabled = true;
+  }
+
+  private _setInFav(isInFav: boolean) {
+    this.view.btnFav.style.fillOpacity = isInFav ? 1 : .25;
   }
 }
 
