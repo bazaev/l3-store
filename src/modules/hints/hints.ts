@@ -4,6 +4,7 @@ import html from './hints.tpl.html';
 
 class Hints {
 	view: View;
+	hintsCount = 3;
 
 	constructor() {
 		this.view = new ViewTemplate(html).cloneView();
@@ -14,11 +15,45 @@ class Hints {
 	}
 
 	async render() {
-		const hints = ['чехол iphone 13 pro', 'коляски agex', 'яндекс станция 2'];
+		let hints = [
+			{
+				title: 'чехол iphone 13 pro',
+				href: '#'
+			}, {
+				title: 'коляски agex',
+				href: '#'
+			}, {
+				title: 'яндекс станция 2',
+				href: '#'
+			}, {
+				title: 'коляски agex',
+				href: '#'
+			}, {
+				title: 'яндекс станция 2',
+				href: '#'
+			}
+		];
 
-		this.view.hint1.innerText = hints[0];
-		this.view.hint2.innerText = hints[1];
-		this.view.hint3.innerText = hints[2];
+		hints = hints.slice(0, this.hintsCount);
+
+		this.view.root.append("Например");
+
+		hints.forEach((hint, key) => {
+			if (key === this.hintsCount - 1) {
+				this.view.root.append("или");
+			}else{
+				this.view.root.append(",");
+			}
+
+			const { title, href } = hint;
+			
+			const $hint = document.createElement('a');
+			$hint.classList.add('hints__hint');
+			$hint.innerText = title;
+			$hint.href = href;
+			
+			this.view.root.appendChild($hint);
+		})
 	}
 }
 
