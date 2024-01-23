@@ -66,11 +66,8 @@ class ProductDetail extends Component {
     if (!this.product) return;
 
     const isInFav = await favService.isInFav(this.product);
-    if (isInFav) {
-      favService.removeProduct(this.product);
-    }else{
-      favService.addProduct(this.product);
-    }
+
+    favService.toggleProduct(this.product, isInFav);
 
     this._setInFav(!isInFav);
   }
@@ -81,7 +78,7 @@ class ProductDetail extends Component {
   }
 
   private _setInFav(isInFav: boolean) {
-    this.view.btnFav.style.fillOpacity = isInFav ? 1 : .25;
+    this.view.btnFav.classList.toggle('active', isInFav);
   }
 }
 

@@ -95,6 +95,10 @@ img {
     height: 32px;
     margin-top: 4px;
   }
+
+  &:not(.active) {
+    fill-opacity: .25;
+  }
 }
 
 .btn {

@@ -5,7 +5,7 @@ const DB = '__wb-fav';
 
 class FavService {
   init() {
-    this._updCounters();
+    this._updVisible();
   }
 
   async addProduct(product: ProductData) {
@@ -18,9 +18,17 @@ class FavService {
     await this.set(products.filter(({ id }) => id !== product.id));
   }
 
+  async toggleProduct(product: ProductData, isInFav: boolean) {
+    if (isInFav) {
+      await this.removeProduct(product)
+    }else{
+      await this.addProduct(product)
+    }
+  }
+
   async clear() {
     await localforage.removeItem(DB);
-    this._updCounters();
+    this._updVisible();
   }
 
   async get(): Promise<ProductData[]> {
@@ -29,7 +37,7 @@ class FavService {
 
   async set(data: ProductData[]) {
     await localforage.setItem(DB, data);
-    this._updCounters();
+    this._updVisible();
   }
 
   async isInFav(product: ProductData) {
@@ -37,17 +45,13 @@ class FavService {
     return products.some(({ id }) => id === product.id);
   }
 
-  private async _updCounters() {
+  private async _updVisible() {
     const products = await this.get();
     const isEmpty = !products.length;
 
     const fav = document.querySelector('.js__fav');
 
-    if (isEmpty) {
-      fav?.classList.add('hide');
-    }else{
-      fav?.classList.remove('hide');
-    }
+    fav?.classList?.toggle('hide', isEmpty);
   }
 }
 
