@@ -15,6 +15,8 @@ class Hints {
 	}
 
 	async render() {
+		const $root = this.view.root;
+
 		let hints = [
 			{
 				title: 'чехол iphone 13 pro',
@@ -36,23 +38,20 @@ class Hints {
 
 		hints = hints.slice(0, this.hintsCount);
 
-		this.view.root.append("Например");
+		$root.append("Например");
 
 		hints.forEach((hint, key) => {
-			if (key === this.hintsCount - 1) {
-				this.view.root.append("или");
-			}else{
-				this.view.root.append(",");
-			}
-
 			const { title, href } = hint;
-			
+			const isLast = key === this.hintsCount - 1;
+			const separator = isLast ? "или" : ",";
+
 			const $hint = document.createElement('a');
 			$hint.classList.add('hints__hint');
 			$hint.innerText = title;
 			$hint.href = href;
-			
-			this.view.root.appendChild($hint);
+
+			$root.append(separator);
+			$root.appendChild($hint);
 		})
 	}
 }
