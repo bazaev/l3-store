@@ -30,13 +30,15 @@ class Checkout extends Component {
   }
 
   private async _makeOrder() {
-    eventAnalytics.purchase(this.products);
-    
     await cartService.clear();
-    fetch('/api/makeOrder', {
+    
+    await fetch('/api/makeOrder', {
       method: 'POST',
       body: JSON.stringify(this.products)
     });
+
+    eventAnalytics.purchase(this.products);
+
     window.location.href = '/?isSuccessOrder';
   }
 }

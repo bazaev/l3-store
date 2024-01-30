@@ -2,6 +2,7 @@ import { Component } from '../component';
 import html from './catalog.tpl.html';
 
 import { ProductList } from '../productList/productList';
+import eventAnalytics from '../../eventAnalytics';
 
 class Catalog extends Component {
   productList: ProductList;
@@ -17,6 +18,8 @@ class Catalog extends Component {
     const productsResp = await fetch('/api/getProducts');
     const products = await productsResp.json();
     this.productList.update(products);
+    
+    eventAnalytics.viewCard(products, this.productList.view.root);
   }
 }
 

@@ -3,6 +3,7 @@ import { Component } from '../component';
 import html from './homepage.tpl.html';
 
 import { ProductList } from '../productList/productList';
+import eventAnalytics from '../../eventAnalytics';
 
 class Homepage extends Component {
   popularProducts: ProductList;
@@ -19,6 +20,7 @@ class Homepage extends Component {
       .then((res) => res.json())
       .then((products) => {
         this.popularProducts.update(products);
+        eventAnalytics.viewCard(products, this.popularProducts.view.root);
       });
 
     const isSuccessOrder = new URLSearchParams(window.location.search).get('isSuccessOrder');

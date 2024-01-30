@@ -40,35 +40,29 @@ class EventAnalytics {
 		this.#sendEvent('addToCard', product);
 	}
 
-	viewCard(products:ProductData[], children:HTMLCollection) {
-		const keysCache: { [key: number]: string } = {};
-		
+	viewCard(products:ProductData[], node:HTMLElement) {
 		const intersectionObserver = new IntersectionObserver((entries) => {
 			entries.forEach(async entry => {
-				if (entry.isIntersecting) {
+				if (!entry.isIntersecting) { return }
+
+				intersectionObserver.unobserve(entry.target);
+
+				try {
 					// @ts-ignore
-					const index = entry.target._index;
+					const index = entry.target._index;console.log(index)
 					const product = products[index];
 					const isPromo = Object.keys(product.log).length > 0;
 					const type = isPromo ? 'viewCardPromo' : 'viewCard';
 
-					let secretKey = keysCache[product.id];
-
-					if (!secretKey) {
-						try {
-							const { signal } = this.abortController;
-							const response = await fetch(`/api/getProductSecretKey?id=${product.id}`, { signal });
-							secretKey = await response.json();
-							keysCache[product.id] = secretKey;
-						}catch(e){}
-					}
-
+					const { signal } = this.abortController;
+					const response = await fetch(`/api/getProductSecretKey?id=${product.id}`, { signal });
+					const secretKey = await response.json();
 					this.#sendEvent(type, { ...product, secretKey });
-				  }
+				}catch(e){}
 			})
 		});
 
-		[].forEach.call(children, (element:HTMLElement, key) => {
+		[].forEach.call(node.children, (element:HTMLElement, key) => {
 			// @ts-ignore
 			element._index = key;
 			intersectionObserver.observe(element);
