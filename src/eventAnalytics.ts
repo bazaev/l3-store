@@ -45,8 +45,6 @@ class EventAnalytics {
 			entries.forEach(async entry => {
 				if (!entry.isIntersecting) { return }
 
-				intersectionObserver.unobserve(entry.target);
-
 				try {
 					// @ts-ignore
 					const index = entry.target._index;console.log(index)
@@ -58,6 +56,8 @@ class EventAnalytics {
 					const response = await fetch(`/api/getProductSecretKey?id=${product.id}`, { signal });
 					const secretKey = await response.json();
 					this.#sendEvent(type, { ...product, secretKey });
+
+					intersectionObserver.unobserve(entry.target);
 				}catch(e){}
 			})
 		});
